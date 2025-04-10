@@ -3,13 +3,12 @@ package com.spring.ziggle.controller;
 import com.spring.ziggle.dto.MessageDto;
 import com.spring.ziggle.service.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/messages")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class MessageController {
 
     private final MessageService messageService;

@@ -1,5 +1,6 @@
 package com.spring.ziggle.repository;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.spring.ziggle.dto.UserDto;
 import com.google.api.core.ApiFuture;
 import com.google.firebase.database.*;
@@ -678,6 +679,30 @@ public class UserRepository {
         });
 
         completableFuture.join();
+    }
+
+    public boolean checkIfUserExists(String uid){
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        DatabaseReference userRef = ref.child(uid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean exists = dataSnapshot.exists();
+                future.complete(exists);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                future.completeExceptionally(new RuntimeException("The read failed: " + databaseError.getMessage()));
+            }
+        });
+
+        try {
+            return future.join();
+        } catch (Exception e) {
+            throw new RuntimeException("Error checking user existence: " + e.getMessage(), e);
+        }
     }
 }
 

@@ -3,13 +3,12 @@ package com.spring.ziggle.service;
 import com.spring.ziggle.dto.UserDto;
 import com.spring.ziggle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -132,6 +131,10 @@ public class UserService {
 
     public void updateUserInteract(String uid, String interactUserUid, int check) {
         userRepository.updateUserInteract(uid, interactUserUid, check);
+    }
+
+    public boolean checkIfUserExists(String uid) {
+        return userRepository.checkIfUserExists(uid);
     }
 }
 
