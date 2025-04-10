@@ -3,11 +3,10 @@ package com.spring.ziggle.service;
 import com.spring.ziggle.dto.MessageDto;
 import com.spring.ziggle.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class MessageService {
 
     private final MessageRepository messageRepository;

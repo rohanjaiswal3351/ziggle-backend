@@ -3,7 +3,6 @@ package com.spring.ziggle.controller;
 import com.spring.ziggle.dto.UserDto;
 import com.spring.ziggle.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
@@ -322,6 +321,16 @@ public class UserController {
             return ResponseEntity.ok().body("User name updated successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error updating user name: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/checkIfUserExists")
+    public ResponseEntity<Object> checkIfUserExists(@RequestParam String uid) {
+        try {
+            boolean exists = userService.checkIfUserExists(uid);
+            return ResponseEntity.ok().body(exists);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error checking user existence: " + e.getMessage());
         }
     }
 
