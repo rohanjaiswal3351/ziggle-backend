@@ -14,8 +14,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public List<UserDto> getNextUsers(String lastUserKey, int pageSize) {
-        return userRepository.getNextUsers(lastUserKey, pageSize);
+    public List<UserDto> getNextUsers(String uid, int pageSize) {
+        return userRepository.getNextUsers(uid, pageSize);
     }
 
     public void addUser(UserDto userDto) {
