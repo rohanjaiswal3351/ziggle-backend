@@ -5,8 +5,10 @@ import com.google.api.core.ApiFuture;
 import com.google.firebase.database.*;
 import org.springframework.stereotype.Repository;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Repository
@@ -19,28 +21,46 @@ public class UserRepository {
         ref = FirebaseDatabase.getInstance().getReference(COLLECTION_NAME);
     }
 
-    public List<UserDto> getNextUsers(String lastUserKey, int pageSize) {
+    public List<UserDto> getNextUsers(String uid, int pageSize) {
         CompletableFuture<List<UserDto>> future = new CompletableFuture<>();
-        List<UserDto> userList = new ArrayList<>();
+        DatabaseReference userRef = ref.child(uid);
 
-        Query query;
-
-        if (lastUserKey == null || lastUserKey.isEmpty()) {
-            query = ref.orderByKey().limitToFirst(pageSize);
-        } else {
-            query = ref.orderByKey().startAt(lastUserKey).limitToFirst(pageSize);
-        }
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                    UserDto userDto = ds.getValue(UserDto.class);
-                    userList.add(userDto);
-                    System.out.println(userDto);
+                UserDto userDto = dataSnapshot.getValue(UserDto.class);
+                String lastUserKey = "";
+                if(Objects.nonNull(userDto.getInteract()) && !userDto.getInteract().isEmpty()) {
+                    lastUserKey = userDto.getInteract().get(userDto.getInteract().size()-1);
                 }
 
-                future.complete(userList);
+                List<UserDto> userList = new ArrayList<>();
+
+                Query query;
+
+                if (lastUserKey == null || lastUserKey.isEmpty()) {
+                    query = ref.orderByKey().limitToFirst(pageSize);
+                } else {
+                    query = ref.orderByKey().startAt(lastUserKey).limitToFirst(pageSize);
+                }
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                            UserDto userDto = ds.getValue(UserDto.class);
+                            userList.add(userDto);
+                            System.out.println(userDto);
+                        }
+
+                        future.complete(userList);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        future.completeExceptionally(new RuntimeException("The read failed: " + databaseError.getMessage()));
+                    }
+                });
             }
 
             @Override

@@ -17,9 +17,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/getNextUsers")
-    public ResponseEntity<Object> getNextUsers(@RequestParam String lastUserKey, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getNextUsers(@RequestParam String uid, @RequestParam int pageSize) {
         try {
-            List<UserDto> data = userService.getNextUsers(lastUserKey, pageSize);
+            List<UserDto> data = userService.getNextUsers(uid, pageSize);
             return ResponseEntity.ok().body(data);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error reading data: " + e.getMessage());
